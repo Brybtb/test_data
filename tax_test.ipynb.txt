@@ -1,0 +1,243 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: matplotlib in /usr/local/lib/python3.6/site-packages (2.2.3)\n",
+      "Requirement already satisfied: six>=1.10 in /usr/local/lib/python3.6/site-packages (from matplotlib) (1.11.0)\n",
+      "Requirement already satisfied: numpy>=1.7.1 in /usr/local/lib/python3.6/site-packages (from matplotlib) (1.15.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.6/site-packages (from matplotlib) (0.10.0)\n",
+      "Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.6/site-packages (from matplotlib) (2.2.0)\n",
+      "Requirement already satisfied: python-dateutil>=2.1 in /usr/local/lib/python3.6/site-packages (from matplotlib) (2.7.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.6/site-packages (from matplotlib) (1.0.1)\n",
+      "Requirement already satisfied: pytz in /usr/local/lib/python3.6/site-packages (from matplotlib) (2018.5)\n",
+      "Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from kiwisolver>=1.0.1->matplotlib) (39.1.0)\n",
+      "\u001b[31mmkl-devel 2018.0.3 has requirement mkl==2018.0.3, but you'll have mkl 2019.0 which is incompatible.\u001b[0m\n",
+      "\u001b[31mmenpo 0.8.1 has requirement matplotlib<2.0,>=1.4, but you'll have matplotlib 2.2.3 which is incompatible.\u001b[0m\n",
+      "\u001b[31mmenpo 0.8.1 has requirement pillow<5.0,>=3.0, but you'll have pillow 5.2.0 which is incompatible.\u001b[0m\n",
+      "\u001b[31mmenpo 0.8.1 has requirement scipy<1.0,>=0.16, but you'll have scipy 1.1.0 which is incompatible.\u001b[0m\n",
+      "\u001b[33mYou are using pip version 10.0.1, however version 18.1 is available.\n",
+      "You should consider upgrading via the 'pip install --upgrade pip' command.\u001b[0m\n"
+     ]
+    }
+   ],
+   "source": [
+    "! pip install matplotlib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import requests\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "import datetime as dt\n",
+    "%matplotlib notebook"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Read tax_test.csv\n",
+    "account_info = 'tax_test.csv'\n",
+    "tax_test = pd.read_csv(account_info, encoding = 'utf-8')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Strip whitespace/regex\n",
+    "tax_test.columns = tax_test.columns.str.replace(\"\\r\", \"\")\n",
+    "\n",
+    "tax_test.columns = tax_test.columns.str.replace(\"\\n\", \"\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Strip out commas\n",
+    "tax_test['Dollar DividendAmount'] = tax_test['Dollar DividendAmount'].str.replace(',', '')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Change Dollar Dividend Amount to numeric\n",
+    "tax_test['Dollar DividendAmount'] = pd.to_numeric(tax_test['Dollar DividendAmount'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create a new series using 'AccountType'\n",
+    "accounts = tax_test.groupby(['AccountType'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create a new series with dividend totals\n",
+    "div_totals = accounts['Dollar DividendAmount'].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create DataFrame off of groupby\n",
+    "div_per_account = pd.DataFrame(accounts['Dollar DividendAmount'].sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>AccountType</th>\n",
+       "      <th>Dollar DividendAmount</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Tax-Exempt</td>\n",
+       "      <td>5149.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Tax_Deferred</td>\n",
+       "      <td>6814.80</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Taxable</td>\n",
+       "      <td>11177.02</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    AccountType  Dollar DividendAmount\n",
+       "0    Tax-Exempt                5149.33\n",
+       "1  Tax_Deferred                6814.80\n",
+       "2       Taxable               11177.02"
+      ]
+     },
+     "execution_count": 61,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Reset index to make 'AccountType a column'\n",
+    "div_per_account = div_per_account.reset_index()\n",
+    "div_per_account.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Chart our data, give it a title, and label the axes\n",
+    "div_chart = div_totals.plot(kind=\"bar\", title=\"Divs\")\n",
+    "div_chart.set_xlabel(\"Account Type\")\n",
+    "div_chart.set_ylabel(\"Dollars\")\n",
+    "\n",
+    "plt.show()\n",
+    "plt.tight_layout()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# It is also possible to group a DataFrame by multiple columns\n",
+    "# This returns an object with multiple indexes, however, which can be harder to deal with\n",
+    "grouped_international_data = clean_ufo_df.groupby(['country', 'state'])\n",
+    "\n",
+    "# Converting a GroupBy object into a DataFrame\n",
+    "international_duration = pd.DataFrame(\n",
+    "    grouped_international_data[\"duration (seconds)\"].sum())\n",
+    "international_duration.head(10)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

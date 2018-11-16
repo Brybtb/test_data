@@ -1,0 +1,29 @@
+Bracket Type,Tax Rate,Tax Bracket
+Head of Household,10,0
+Head of Household,15,13150
+Head of Household,25,50200
+Head of Household,28,129600
+Head of Household,33,209850
+Head of Household,35,411500
+Head of Household,39.6,439000
+Single,10,0
+Single,15,9225
+Single,25,37450
+Single,28,90750
+Single,33,189300
+Single,35,411500
+Single,39.6,413200
+Married Filing Jointly,10,0
+Married Filing Jointly,15,18450
+Married Filing Jointly,25,74900
+Married Filing Jointly,28,151200
+Married Filing Jointly,33,230450
+Married Filing Jointly,35,411500
+Married Filing Jointly,39.6,464850
+Married Filing Separately,10,0
+Married Filing Separately,15,9225
+Married Filing Separately,25,37450
+Married Filing Separately,28,75600
+Married Filing Separately,33,115225
+Married Filing Separately,35,205750
+Married Filing Separately,39.6,232425
